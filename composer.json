@@ -1,0 +1,41 @@
+{
+    "name": "larangular/web-service-manager",
+    "description": "pending",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Simon Diaz",
+            "email": "sdiaz.sz@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1.3",
+        "ext-soap": "*",
+        "larangular/support": "0.1.*",
+        "illuminate/support": "^5.7",
+        "wsdltophp/packagebase": "~1.0"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Larangular\\WebServiceManager\\": "./src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Larangular\\WebServiceManager\\Tests\\": "./tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Larangular\\WebServiceManager\\WebServiceManagerServiceProvider"
+            ],
+            "aliases": {
+                "ServiceRequest": "Larangular\\WebServiceManager\\Facades\\ServiceRequest",
+                "ServiceRecords": "Larangular\\WebServiceManager\\Facades\\ServiceRecords"
+            }
+        }
+    }
+}
