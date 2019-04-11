@@ -8,15 +8,10 @@ use Larangular\WebServiceManager\SoapClient\MTOMDecode;
 
 class WebServiceManagerServiceProvider extends ServiceProvider {
 
-    public function boot() {/*
-        $this->publishes([
-                             __DIR__ . '/../config/uf-scraper.php' => config_path('uf-scraper.php'),
-                         ]);*/
-    }
+    public function boot() {}
 
     public function register() {
         $this->app->register('Larangular\Support\SupportServiceProvider');
-        //$this->mergeConfigFrom(__DIR__ . '/../config/uf-scraper.php', 'uf-scraper');
 
         $this->registerServiceRecords();
 

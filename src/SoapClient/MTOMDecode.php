@@ -12,7 +12,7 @@
 
 namespace Larangular\WebServiceManager\SoapClient;
 
-use Exception;
+use RuntimeException;
 
 /**
  * Class MTOMSoapClient
@@ -25,15 +25,13 @@ use Exception;
  */
 class MTOMDecode {
 
-    public function __construct() {}
-
-    public function decode($response){
+    public function decode(string $response): string {
         $xml_response = null;
         // Catch XML response
         preg_match('/<s[\s\S]*nvelope>/', $response, $xml_response);
 
         if (!is_array($xml_response) || !count($xml_response)) {
-            throw new Exception('No XML has been found.');
+            throw new RuntimeException('No XML has been found.');
         }
 
         $xml_response = reset($xml_response);
@@ -58,7 +56,8 @@ class MTOMDecode {
         $binary = base64_encode($binary);
         // Replace xop:Include tag by base64_encode(binary)
         // Note: SoapClient will automatically base64_decode(binary)
-        return preg_replace('/<xop:Include[\s\S]*cid:'.preg_quote($cid, '/').'[\s\S]*?\/>/', $binary, $xml_response);
+        return preg_replace('/<xop:Include[\s\S]*cid:' . preg_quote($cid, '/') . '[\s\S]*?\/>/', $binary,
+            $xml_response);
     }
 
     private function getContentId($element) {
@@ -67,9 +66,9 @@ class MTOMDecode {
         return $cid[2];
     }
 
-    private function getBinaryContent($contentId, $response) {
+    private function getBinaryContent($contentId, $response): string {
         $binary = null;
-        preg_match('/Content-ID:[\s\S].+?'.preg_quote($contentId, '/').'>([\s\S]*?)--uuid/', $response, $binary);
+        preg_match('/Content-ID:[\s\S].+?' . preg_quote($contentId, '/') . '>([\s\S]*?)--uuid/', $response, $binary);
 
         return trim($binary[1]);
     }

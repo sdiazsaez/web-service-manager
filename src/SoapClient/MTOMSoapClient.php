@@ -5,10 +5,10 @@ namespace Larangular\WebServiceManager\SoapClient;
 use SoapClient;
 use Exception;
 
-class MTOMSoapClient extends SoapClient
-{
+class MTOMSoapClient extends SoapClient {
 
     private $lastSoapOutputHeaders;
+
     /**
      * Override SoapClient to add MTOM decoding on responses.
      *
@@ -28,34 +28,32 @@ class MTOMSoapClient extends SoapClient
      * @return string The XML SOAP response with <xop> tag replaced by base64 corresponding attachment
      * @throws Exception
      */
-    public function __doRequest($request, $location, $action, $version, $one_way = 0)
-    {
+    public function __doRequest(string $request, string $location, string $action, int $version, $one_way = 0): string {
         $exception = null;
+        $response = '';
         try {
             $response = parent::__doRequest($request, $location, $action, $version, $one_way);
-        }
-        catch (SoapFault $sf) {
+        } catch (SoapFault $sf) {
             //this code was not reached
             $exception = $sf;
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             //nor was this code reached either
             $exception = $e;
         }
-        if((isset($this->__soap_fault)) && ($this->__soap_fault != null)) {
+
+        if (isset($this->__soap_fault) && $this->__soap_fault !== null) {
             //this is where the exception from __doRequest is stored
             $exception = $this->__soap_fault;
         }
 
-        if($exception != null) {
+        if ($exception != null) {
             throw $exception;
         }
 
         return app('ws-manager.mtom-decode')->decode($response);
-        //return (new MTOMDecode())->decode($response);
     }
 
-    public function getLastSoapOutputHeaders(){
+    public function getLastSoapOutputHeaders() {
         return $this->lastSoapOutputHeaders;
     }
 

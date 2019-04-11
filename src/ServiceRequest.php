@@ -3,7 +3,7 @@
 namespace Larangular\WebServiceManager;
 
 use Larangular\WebServiceManager\Register\{ServiceRecords, ServiceDescriptor};
-use Larangular\WebServiceManager\Request\{RequestComposer, ServiceCaller};
+use Larangular\WebServiceManager\Request\Requestable;
 
 class ServiceRequest {
 
@@ -13,28 +13,21 @@ class ServiceRequest {
         $this->serviceRecord = $serviceRecord;
     }
 
-    public function makeRequest(string $provider, string $service, array $data, bool $dataTransform = true) {
+    public function getRequestableWithDescriptor(ServiceDescriptor $descriptor, array $data, $transform = true): Requestable {
+        return new Requestable($descriptor, $data, $transform);
+    }
+
+    public function getRequestableWithDescriptorName(string $descriptorName, array $data, $transform = true): Requestable {
+        return $this->getRequestableWithDescriptor($this->getServiceDescriptor($descriptorName), $data, $transform);
+    }
+
+    public function getRequestableWithServiceNames(string $provider, string $service, array $data, bool $transform = true): Requestable {
         $descriptor = $this->serviceRecord->getService($provider, $service);
-        $request = $this->getServiceRequest($descriptor, $data, $dataTransform);
-        $serviceInstance = $this->getServiceInstance($descriptor, $request);
-        $response = $serviceInstance->getResponse();
+        return $this->getRequestableWithDescriptor($descriptor, $data, $transform);
 
-        return $response;
     }
 
-    private function getServiceInstance(ServiceDescriptor $service, RequestComposer $request): ServiceCaller {
-        $class = $service->serviceCallClassName();
-        return new $class($request);
+    private function getServiceDescriptor(string $descriptorName): ServiceDescriptor {
+        return new $descriptorName;
     }
-
-    private function getServiceRequest(ServiceDescriptor $service, array $data, bool $transform = true): RequestComposer {
-        $class = $service->requestClassName();
-        if($transform) {
-            $transformClass = $service->transformableClassName();
-            $data = (new $transformClass())->transform($data);
-        }
-
-        return new $class($data);
-    }
-
 }
