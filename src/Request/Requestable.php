@@ -9,6 +9,8 @@ class Requestable {
     public  $descriptor;
     private $transformable;
     private $requestData;
+    private $requestComposer;
+    private $serviceCaller;
 
     public function __construct(ServiceDescriptor $descriptor, array $data, $transformable = true) {
         $this->descriptor = $descriptor;
@@ -20,23 +22,28 @@ class Requestable {
     }
 
     public function getResponse(): ServiceResponse {
-        $request = $this->getServiceRequest();
-        $service = $this->getServiceInstance($this->descriptor, $request);
-        return $service->getResponse();
+        return $this->getServiceCaller()->getResponse();
+    }
+
+    public function getServiceCaller(): ServiceCaller {
+        if(is_null($this->serviceCaller)) {
+            $class = $this->descriptor->serviceCallClassName();
+            $this->serviceCaller = new $class($this->getRequestComposer());
+        }
+        return $this->serviceCaller;
     }
 
     public function getTransformedData(): array {
         return $this->requestData;
     }
 
-    private function getServiceInstance(ServiceDescriptor $service, RequestComposer $request): ServiceCaller {
-        $class = $service->serviceCallClassName();
-        return new $class($request);
-    }
+    private function getRequestComposer(): RequestComposer {
+        if(!is_null($this->requestComposer)) {
+            $class = $this->descriptor->requestClassName();
+            $this->requestComposer = new $class($this->requestData);
+        }
 
-    private function getServiceRequest(): RequestComposer {
-        $class = $this->descriptor->requestClassName();
-        return new $class($this->requestData);
+        return $this->requestComposer;
     }
 
     private function setTransformedData($data): array {
