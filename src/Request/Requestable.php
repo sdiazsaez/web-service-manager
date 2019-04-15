@@ -38,7 +38,7 @@ class Requestable {
     }
 
     private function getRequestComposer(): RequestComposer {
-        if(!is_null($this->requestComposer)) {
+        if(is_null($this->requestComposer)) {
             $class = $this->descriptor->requestClassName();
             $this->requestComposer = new $class($this->requestData);
         }
