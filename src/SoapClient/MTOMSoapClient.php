@@ -4,6 +4,7 @@ namespace Larangular\WebServiceManager\SoapClient;
 
 use SoapClient;
 use Exception;
+use Illuminate\Support\Arr;
 
 class MTOMSoapClient extends SoapClient {
 
@@ -51,6 +52,16 @@ class MTOMSoapClient extends SoapClient {
         }
 
         return app('ws-manager.mtom-decode')->decode($response);
+    }
+
+    public function __call($function_name, $arguments) {
+        return $this->__soapCall($function_name, $arguments);//$input_headers, $output_headers);
+    }
+
+    public function __soapCall($function_name, $arguments, $options = null, $input_headers = null, &$output_headers = null) {
+        $response = parent::__soapCall($function_name, $arguments, $options, $input_headers, $output_headers);
+        $this->lastSoapOutputHeaders = Arr::first($output_headers);
+        return $response;
     }
 
     public function getLastSoapOutputHeaders() {
