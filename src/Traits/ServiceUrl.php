@@ -5,7 +5,7 @@ namespace Larangular\WebServiceManager\Traits;
 trait ServiceUrl {
 
     public function getServiceEnvironmentConfig(string $provider, string $configPath) {
-        return config($configPath . $this->serviceUrl_getEnvironment($provider));
+        return config($provider . '-services.' . $configPath . '.' . $this->serviceUrl_getEnvironment($provider));
     }
 
     public function getServiceUrl(string $provider, string $service) {
