@@ -18,7 +18,7 @@ trait ServiceUrl {
     private function serviceUrl_getEnvironment(string $provider): string {
         $environment = config($provider . '-services.force_environment');
         if ($environment === false || is_null($environment)) {
-            $environment = app()->isLocal()
+            $environment = app()->environment(['local', 'testing'])
                 ? 'development'
                 : 'production';
         }
