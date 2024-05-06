@@ -2,8 +2,6 @@
 
 namespace Larangular\WebServiceManager\Request;
 
-use WsdlToPhp\PackageBase\AbstractSoapClientBase;
-
 class ServiceResponse {
 
     public $header;
@@ -12,15 +10,21 @@ class ServiceResponse {
     public $hasError;
     private $serviceClient;
 
-    public function __construct(AbstractSoapClientBase $service) {
+    public function __construct($service) {
         $this->serviceClient = $service;
-        $this->header = $service->getSoapClient()->getLastSoapOutputHeaders();
+        $this->header = $this->getOutputHeaders($service);
         $this->body = $service->getResult();
         $this->error = $service->getLastError();
     }
 
-    public function getServiceClient(): AbstractSoapClientBase {
-        return $this->serviceClient;
+    private function getOutputHeaders($service) {
+        return (method_exists($service, 'getSoapClient'))
+            ? $service->getSoapClient()->getLastSoapOutputHeaders()
+            : $service->getLastOutputHeaders();
+    }
+
+    public function getServiceClient() {
+        return $this->serviceClient; //AbstractSoapClientBase
     }
 
     public function toArray(): array {

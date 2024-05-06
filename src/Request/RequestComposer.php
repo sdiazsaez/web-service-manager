@@ -12,7 +12,7 @@ abstract class RequestComposer {
         $this->data = $data;
     }
 
-    abstract public function getRequest(): AbstractStructBase;
+    abstract public function getRequest(); //: AbstractStructBase;
 
     protected function getStruct(string $name, string $prefixKey = '') {
         $struct = new $name();
