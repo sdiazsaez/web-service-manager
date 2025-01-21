@@ -11,7 +11,7 @@
     "require": {
         "php": ">=7.1",
         "ext-soap": "*",
-        "illuminate/support": "^5.8|^6.0|^7.0|^8.0",
+        "illuminate/support": "*",
         "larangular/support": "^0.1.0|^0.2.0",
         "larangular/module-recorder": "^0.1.0|^0.2.0",
         "wsdltophp/packagebase": "~1.0|^2.2.0"
