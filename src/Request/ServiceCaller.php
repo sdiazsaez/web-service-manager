@@ -20,7 +20,7 @@ abstract class ServiceCaller {
 
     abstract public function serviceClass(): string;
     abstract public function makeRequest($service, AbstractStructBase $request): void;
-    abstract public function isValidResponse($response): bool;
+    //abstract public function isValidResponse($response): bool;
 
     public function __construct(RequestComposer $request) {
         $class = $this->serviceClass();
@@ -30,8 +30,16 @@ abstract class ServiceCaller {
 
     public function getResponse(): ServiceResponse {
         $this->makeRequest($this->service, $this->request->getRequest());
-        return $this->makeServiceResponse_GetResponse($this->service, function($body) {
-            return !$this->isValidResponse($body);
+        return $this->makeServiceResponse_GetResponse($this->service, function($serviceResponse) {
+            if (method_exists($this, 'isValidResponse')) {
+                return !$this->isValidResponse($serviceResponse->body);
+            }
+
+            if (method_exists($this, 'hasValidResponse')) {
+                return !$this->hasValidResponse($serviceResponse);
+            }
+
+            return true; //hasError = true
         });
     }
 
